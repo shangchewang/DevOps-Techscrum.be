@@ -5,7 +5,7 @@
     "description": "This is TechScrum API v1",
     "version": "1.0.0"
   },
-  "host": "localhost:8080/api/v1",
+  "host": "localhost:8000/api",
   "basePath": "/",
   "schemes": [
     "http"
@@ -18,17 +18,6 @@
         "responses": {
           "201": {
             "description": "Created"
-          }
-        }
-      }
-    },
-    "/healthcheck": {
-      "get": {
-        "description": "",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "OK"
           }
         }
       }
@@ -50,60 +39,6 @@
         }
       }
     },
-    "/admin-register/{email}": {
-      "post": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "email",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "origin",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {}
-      }
-    },
-    "/register/{email}": {
-      "post": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "email",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "origin",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "appName": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "409": {
-            "description": "Conflict"
-          }
-        }
-      }
-    },
     "/contacts": {
       "post": {
         "description": "",
@@ -111,6 +46,20 @@
         "responses": {
           "200": {
             "description": "OK"
+          }
+        }
+      }
+    },
+    "/emailus": {
+      "post": {
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "202": {
+            "description": "Accepted"
+          },
+          "400": {
+            "description": "Bad Request"
           }
         }
       }
@@ -157,58 +106,6 @@
           },
           "403": {
             "description": "Forbidden"
-          }
-        }
-      }
-    },
-    "/register/{token}": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "token",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      },
-      "put": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "token",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "email": {
-                  "example": "any"
-                },
-                "name": {
-                  "example": "any"
-                },
-                "password": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
           }
         }
       }
@@ -438,6 +335,32 @@
         }
       }
     },
+    "/tasks/project/{id}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
     "/tasks/{id}": {
       "get": {
         "description": "",
@@ -532,6 +455,20 @@
             "description": "Unauthorized"
           }
         }
+      }
+    },
+    "/tasks/{id}/toggleActive": {
+      "put": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {}
       }
     },
     "/account/me": {
@@ -986,7 +923,7 @@
         }
       }
     },
-    "/roles": {
+    "/permissions": {
       "get": {
         "description": "",
         "parameters": [],
@@ -997,18 +934,12 @@
         }
       }
     },
-    "/roles/{id}/permissions/{permissionId}": {
-      "put": {
+    "/projects/{projectId}/roles": {
+      "get": {
         "description": "",
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "permissionId",
+            "name": "projectId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -1020,17 +951,58 @@
           }
         }
       },
-      "delete": {
+      "put": {
         "description": "",
         "parameters": [
           {
-            "name": "id",
+            "name": "projectId",
             "in": "path",
             "required": true,
             "type": "string"
           },
           {
-            "name": "permissionId",
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "roleName": {
+                  "example": "any"
+                },
+                "permissions": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/projects/{projectId}/roles/{roleId}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "roleId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -1041,15 +1013,76 @@
             "description": "OK"
           }
         }
-      }
-    },
-    "/permissions": {
-      "get": {
+      },
+      "put": {
         "description": "",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "roleId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "permissions": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "delete": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "roleId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
@@ -1076,12 +1109,36 @@
         }
       }
     },
-    "/board/{id}": {
+    "/board/{id}/{inputFilter}/{userFilter}/{taskTypeFilter}/{labelFilter}": {
       "get": {
         "description": "",
         "parameters": [
           {
             "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "inputFilter",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "userFilter",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "taskTypeFilter",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "labelFilter",
             "in": "path",
             "required": true,
             "type": "string"
@@ -1095,6 +1152,17 @@
         "description": "",
         "parameters": [],
         "responses": {}
+      }
+    },
+    "/labels": {
+      "get": {
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/labels/{projectId}": {
@@ -1260,6 +1328,44 @@
         }
       }
     },
+    "/projects/{projectId}/backlogs/{inputCase}/{userCase}/{typeCase}/{labelCase}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "inputCase",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "userCase",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "typeCase",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "labelCase",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {}
+      }
+    },
     "/sprints": {
       "get": {
         "description": "",
@@ -1386,7 +1492,7 @@
         }
       }
     },
-    "/projects/{projectId}/dailyScrums/{userId}/{taskId}/{date}": {
+    "/projects/{projectId}/dailyScrums": {
       "get": {
         "description": "",
         "parameters": [
@@ -1398,20 +1504,7 @@
           },
           {
             "name": "userId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "taskId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "date",
-            "in": "path",
-            "required": true,
+            "in": "query",
             "type": "string"
           }
         ],
@@ -1420,9 +1513,7 @@
             "description": "OK"
           }
         }
-      }
-    },
-    "/projects/{projectId}/dailyScrums": {
+      },
       "post": {
         "description": "",
         "parameters": [
@@ -1438,31 +1529,10 @@
             "schema": {
               "type": "object",
               "properties": {
-                "title": {
-                  "example": "any"
-                },
-                "progress": {
-                  "example": "any"
-                },
-                "isFinished": {
-                  "example": "any"
-                },
-                "hasReason": {
-                  "example": "any"
-                },
-                "reason": {
-                  "example": "any"
-                },
-                "isNeedSupport": {
-                  "example": "any"
-                },
-                "userId": {
-                  "example": "any"
-                },
                 "taskId": {
                   "example": "any"
                 },
-                "createdDate": {
+                "userId": {
                   "example": "any"
                 }
               }
@@ -1474,9 +1544,30 @@
             "description": "OK"
           }
         }
+      },
+      "delete": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "taskId",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
       }
     },
-    "/projects/{projectId}/dailyScrums/{userId}/{taskId}": {
+    "/projects/{projectId}/dailyScrums/{dailyScrumId}": {
       "patch": {
         "description": "",
         "parameters": [
@@ -1487,13 +1578,7 @@
             "type": "string"
           },
           {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "taskId",
+            "name": "dailyScrumId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -1507,25 +1592,7 @@
                 "progress": {
                   "example": "any"
                 },
-                "isFinished": {
-                  "example": "any"
-                },
-                "hasReason": {
-                  "example": "any"
-                },
-                "reason": {
-                  "example": "any"
-                },
-                "isNeedSupport": {
-                  "example": "any"
-                },
-                "createdDate": {
-                  "example": "any"
-                },
-                "finishValidation": {
-                  "example": "any"
-                },
-                "supportValidation": {
+                "rest": {
                   "example": "any"
                 }
               }
@@ -1539,21 +1606,35 @@
         }
       }
     },
-    "/projects/{projectId}/dailyScrums/{taskId}": {
-      "delete": {
+    "/payment": {
+      "post": {
         "description": "",
         "parameters": [
           {
-            "name": "projectId",
-            "in": "path",
-            "required": true,
+            "name": "origin",
+            "in": "header",
             "type": "string"
           },
           {
-            "name": "taskId",
-            "in": "path",
-            "required": true,
-            "type": "string"
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "planIdentifier": {
+                  "example": "any"
+                },
+                "userId": {
+                  "example": "any"
+                },
+                "paymentMode": {
+                  "example": "any"
+                },
+                "isFreeTrial": {
+                  "example": "any"
+                }
+              }
+            }
           }
         ],
         "responses": {
